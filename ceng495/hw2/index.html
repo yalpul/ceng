@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<title>Ceng495 HW2</title>
+<script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.3.1/stitch.js"></script>
+<script>
+  const client = stitch.Stitch.initializeDefaultAppClient('ceng495hw2-tnylg');
+
+  const db = client.getServiceClient(stitch.RemoteMongoClient.factory, 'mongodb-atlas').db('ceng495hw2');
+  let collection;
+
+  client.auth.loginWithCredential(new stitch.AnonymousCredential())
+  .then(() => {
+      collection = db.collection("collection1");
+      })
+  .catch(err => {
+    console.error(err)
+    });
+</script>
+<script src="hw2.js"></script>
+<link rel="stylesheet" href="hw2.css">
+</head>
+<body>
+  <div id="main_homepage">
+    <div class="homepage_item" id="add_user">
+      <h2>Add User</h2>
+      <input id="add_user_name">
+      <input id="add_user" type="button" value="Add User" onclick="addUser('add_user_name')">
+    </div>
+
+    <div class="homepage_item" id="delete_user">
+      <h2>Delete User</h2>
+      <input id="delete_user_name">
+      <input id="delete_user" type="button" value="Delete User" onclick="deleteUser('delete_user_name')">
+    </div>
+
+    <div class="homepage_item" id="login_user">
+      <h2>Login As User</h2>
+      <input id="login_user_name">
+      <input id="login_user" type="button" value="Login as User" onclick="loginUser('login_user_name')">
+    </div>
+
+    <div class="homepage_item" id="current_users">
+      <h2>Current Users</h5>
+      <div class="homepage_item" id="user_list">
+      </div>
+      <input id="refresh" type="button" value="Refresh" onclick="refreshUsers()">
+    </div>
+  </div>
+  <hr>
+  <div id="user_homepage">
+    <div id="user_header">
+      <div class="user_header_item" id="user_header_name">
+        User Name: 
+      </div>
+      <div class="user_header_item" id="user_header_wallet_block">
+        <div id="user_header_wallet">
+        Wallet: 
+        </div>
+        <br>
+        <input type="button" value="Withdraw" onclick="updateWallet(false)">
+        <input id="change_amount">
+        <input type="button" value="Deposit" onclick="updateWallet(true)">
+      </div>
+      <div class="user_header_item" id="user_header_rating">
+        Rating: 
+      </div>
+    </div>
+    <hr>
+
+    <div id="user_body">
+      <div class="user_body_item" id="user_store">
+        <h4>USER PRODUCTS</h4>
+        Product Name: <input id="product_name"><br>
+        Photo URL: <input id="product_url"><br>
+        Price: <input id="product_price"><br>
+        Quantity: <input id="product_qtt"><br>
+        <input type="button" value="Add" onclick="addProduct()"><br>
+        <input id="delete_prod">
+        <input type="button" value="Drop Product" onclick="dropProduct()">
+        <div id="user_store_list">
+        </div>
+        <h4>ORDER HISTORY</h4>
+        <div id="history">
+        </div>
+      </div>
+      <div class="user_body_item" id="user_history">
+        <h4>PRODUCT</h4>
+        User Name: <input id="user_name_q">
+        Product Name: <input id="product_name_q">
+        <input type="button" value="Get" onclick="getProduct()"><br>
+        <input id="buy_qtt">
+        <input type="button" value="Buy Quantity" onclick="buy()">
+        <div class="product_info">
+          <div id="prod_info_name"></div>
+          <div id="prod_info_price"></div>
+          <div id="prod_info_qtt"></div>
+          <div id="prod_info_seller"></div>
+          <div id="prod_info_rating"></div>
+          <div id="prod_info_img"></div>
+          <img height="100px" id="product_img" src="" >
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

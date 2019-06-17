@@ -1,0 +1,45 @@
+.homepage_item {
+width: 25%;
+height: 25%;
+float: left;
+}
+
+.homepage_item#user_list {
+height: 50px;
+width: 200px;
+overflow-y: scroll;
+border: 1px solid black;
+}
+
+.user_header_item {
+width: 33.3%;
+height: 20%;
+float: left;
+}
+
+.user_body_item {
+width: 50%;
+height: 55%;
+max-height: 55%;
+float: left;
+overflow-y: scroll;
+}
+
+#user_header {
+height: 70px;
+}
+
+#main_homepage {
+height: 150px;
+}
+
+#user_store_list {
+height: 80px;
+overflow-y: scroll;
+}
+
+#history {
+height: 20vh;
+border: 1px solid black;
+overflow-y: scroll;
+}

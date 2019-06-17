@@ -1,0 +1,143 @@
+\documentclass[12pt]{article}
+
+\author{ALPUL, Yasin Fatih (e2098739)}
+\title{Homework 1 - Design Document}
+
+\begin{document}
+\maketitle
+
+\section{Overall Design}
+The following are the classes used in the design:
+\begin{itemize}
+  \item Bullet
+  \item Commando
+  \item FastZombie
+  \item Position
+  \item RegularSoldier
+  \item RegularZombie
+  \item SimulationController
+  \item SimulationObject
+  \item SimulationRunner (driver)
+  \item SlowZombie
+  \item Sniper
+  \item Soldier
+  \item SoldierState
+  \item SoldierType
+  \item Zombie
+  \item ZombieState
+  \item ZombieType
+\end{itemize}
+
+The \texttt{SimulationObject} is the abstract base class for
+  \texttt{Soldier}, \texttt{Zombie} and \texttt{Bullet} classes.
+  Moreover, \texttt{Soldier} is the abstract base class for
+  \texttt{RegularSoldier}, \texttt{Commando} and \texttt{Sniper}
+  classes whereas \texttt{Zombie} is the abstract base class for
+  \texttt{RegularZombie}, \texttt{SlowZombie} and
+  \texttt{FastZombie} classes.
+
+In \texttt{SimulationController} class, adding new objects is
+  done by checking whether the object is of which derived type
+  of \texttt{SimulationObject}. Then, it adds the object to the
+  relevant \texttt{List}. Removing is similar.
+
+For simulating a single step, the order is chosen to be as the
+  following:
+  \begin{enumerate}
+    \item Simulate all soldiers
+    \item Simulate all zombies
+    \item Simulate all bullets
+  \end{enumerate}
+  Later, necessary operations are taken care of such as clearing
+  the battlefield from dead objects.
+
+For storing the objects in the simulation, bullets are chosen to be
+  stored in \texttt{ArrayList} container types, whereas soldier
+  and zombie types are stored in \texttt{LinkedList} containers.
+  The reason for that is, since there will be a possibility that
+  a soldier/zombie can be removed after some step in simulation,
+  an efficient remove operation will be needed. One cannot anticipate
+  which soldier/zombie will be removed next. Therefore, in which
+  exact position in the container will be removed cannot be known.
+  So in this scenario, a \texttt{LinkedList} would be more efficient
+  than an \texttt{ArrayList}. Bullets are stored in \texttt{ArrayList}
+  since the list is completely replaced after each step in the
+  simulation.
+
+
+\section{Design Principles}
+
+\subsection{Minimizing the Accessibility}
+Data fields of classes have been made \texttt{private} where
+  possible. The reason for that is to not expose the internal
+  details of the objects. For instance, \texttt{shootingRange}
+  and \texttt{collisionRange} fields have been made private
+  and public methods have been provided using those fields.
+  However, note that no direct setters/getters have been provided.
+  Instead, to improve abstaction, high level methods have been
+  provided. For instance, zombie types have a method with the
+  signature \texttt{boolean canDetect(Soldier)}, which internally
+  uses its \texttt{detectionRange}. Additionally, in the program
+  code, expressions that are very similar to natural language
+  can be written such as \texttt{if (this.canDetect(closestSoldier))}.
+  This design improves abstraction.
+
+\subsection{Open/Closed Principle}
+This principle states that, as covered in class, \emph{an entity
+  should be open for extension, yet closed for modification}.
+  This principle can be honored by using abstraction, polymorphism
+  and inheritance. As it is also covered in the next section,
+  it is achieved by using polymorphic types instead of \texttt{enum}
+  types for soldier/zombie types.
+
+\subsection{The Single Choice Principle}
+This principle, as covered in class, states that \emph{whenever
+  a software system must support a set of alternatives, ideally
+  only one class in the system knows the entire set of alternatives}.
+  This principle is honored in the sense that, only
+  \texttt{SimulationController} class knows about the entire set of
+  soldier/zombie classes. Even then, it doesn't know about the classes
+  which are derived from soldier/zombie abstract base classes. When
+  a \texttt{SimulationObject} is added, it only checks for whether
+  the object is a \texttt{Soldier}, \texttt{Zombie} or a
+  \texttt{Bullet}.
+
+\subsection{The Liskov Substitution Principle}
+This principle states that, as covered in class, \emph{functions
+  that use references to base classes must be able to use objects
+    of derived classes without knowing it}. This principle is honored
+    in the sense that, in the \texttt{Zombie} class, there are a few
+    methods that take a \texttt{Soldier} reference and call methods
+    of it. However, \texttt{Soldier} is an abstract base class so
+    there is no actual \texttt{Soldier} type whatsoever. In reality,
+    it is either a \texttt{RegularSoldier}, a \texttt{Commando} or a
+    \texttt{Sniper}. But it doesn't know that, it is able to use
+    the reference of the base class without knowing it.
+
+\section{Zombie and Soldier Types}
+In the implementation, \textit{enum} types of zombies and soldiers
+  are not used. Instead, virtual method invocation facilities
+  of JVM have been favored. There are several reasons for that.
+  \begin{enumerate}
+    \item \textbf{Extendability:} In the case of a need
+      for addition of a new soldier/zombie type, a number of
+      changes would be needed to be made to source files.
+      Assuming a check for the type of a soldier/zombie,
+      additional checks for new types would be added.
+      Also, the \textit{enum} types would be recompiled.
+      In this way however, new types would be just plugged and it
+      will work.
+    \item \textbf{Abstraction:} Soldier/zombie type is an
+      internal detail. Users will only need to know whether it
+      is a soldier/zombie or not. User will need a generic soldier
+      object and JVM will call the right method according to its
+      type using \texttt{invokevirtual} bytecode.
+  \end{enumerate}
+
+\section{Javadoc Style}
+While writing javadoc comments, the following conventions have
+  been followed.\\
+  Official Oracle Documentation:\\
+  \texttt{https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html}
+
+\end{document}

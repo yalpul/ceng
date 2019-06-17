@@ -1,0 +1,38 @@
+# Design Choices
+I have made the website in one page with different elements instead of multiple pages.
+Also, the website is able to work solely on client side. That is, no need to send a request
+to a server etc. Users can start using the webpage with only index.html, hw2.css and hw2.js.
+In general, I have sacrificed user experience in favor of functionality.
+Also, security measures were not taken due to them not being required in the homework text
+and the webpage not being deployed on some public platform.
+Most of the error checking is not present, some of them are there, however.
+
+# User's Guide
+My webpage consists of one single page which is divided to several parts. The top most part is dedicated to user actions.
+You can add new users, delete existing ones and login as one of the existing users.
+You can also view all the available users in the database.
+Note that if you add or delete a user, you have to refresh the list to see the changes.
+
+The middle part of the page becomes functional once a user is logged in.
+It include user's name, wallet and rating.
+Rating is rounded to 2 decimal points.
+Wallet part has two buttons for depositing money and withdrawing money.
+
+The lower part of the screen consists of two parts.
+The one on the left is the about product and order details of the user.
+The right part is the product page. It is possible to search for products without a logged in user.
+If there is a logged in user, he can buy product(s) using this part.
+
+The sanity checks required by the homework are implemented. A user cannot buy a product if he doesn't have
+enough money.
+
+In the left part, user products part, user can add new product with the given information
+such as product name, quantity, price etc. and also delete existing products (drop).
+Below that is the order history. Each purchase is logged there with information about
+product name, purchased quantity and the rating given to purchase.
+Note that, changes in this parts are not reflected until the user's next logon.
+The login section on the top can be used to relogin the user.
+
+Rate operation happens when the user buys a product. A small window will appear and ask to rate the purchase
+with a score between 1 and 5. The rating of the user will update once the product page is refreshed
+or the user is re-logged in.
