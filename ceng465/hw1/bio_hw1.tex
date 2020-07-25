@@ -1,0 +1,148 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{amsmath}
+\hbadness=10000
+
+\usepackage[hmargin=3cm,vmargin=6.0cm]{geometry}
+%\topmargin=0cm
+\topmargin=-2cm
+\addtolength{\textheight}{6.5cm}
+\addtolength{\textwidth}{2.0cm}
+%\setlength{\leftmargin}{-5cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{0.0cm}
+
+\newcommand{\HRule}{\rule{\linewidth}{1mm}}
+
+%misc libraries goes here
+\usepackage{tabularx}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\renewcommand\tabularxcolumn[1]{m{#1}}
+\newcolumntype{M}{>{\centering\arraybackslash}m{1.15cm}}
+\newcommand\tikzmark[2]{%
+\tikz[remember picture,baseline] \node[inner sep=2pt,outer sep=0] (#1){#2};%
+}
+
+\newcommand\link[2]{%
+\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
+  \draw[->] (#1) to (#2);
+\end{tikzpicture}%
+}
+\begin{document}
+
+\noindent
+\HRule \\[3mm]
+\begin{flushright}
+
+                                         \LARGE \textbf{CENG 465}  \\[4mm]
+                                         \Large Introduction to Bioinformatics \\[4mm]
+                                        \normalsize      Spring '2019-2020 \\
+                                           \Large   Homework 1 \\
+                    \normalsize Deadline: March 1, 23:59 \\
+                    \normalsize Submission: via ODTUCLASS
+\end{flushright}
+\HRule
+
+\section*{Student Information }
+Full Name : Yasin Fatih ALPUL \\
+Id Number :  2098739 \\
+
+\section*{Problem 1}
+\begin{figure}[H]
+    \centering
+\begin{tabularx}{\textwidth}{|M|M|M|M|M|M|M|M|M|M|M|}
+\cline{1-11}
+	&-	&M	&I	&M	&A	&G	&E	&D	&I	&L	\\ \cline{1-11}
+-	&0	&0	&0	&0	&0	&0	&0	&0	&0	&0	\\\cline{1-11}
+G	&0	&0	&0	&0	&0	&7	&3	&0	&0	&0	\\\cline{1-11}
+A	&0	&0	&\tikzmark{h}{0}	&0	&7	&3	&1	&0	&0	&0	\\\cline{1-11}
+M	&0	&7	&3	&\tikzmark{f}{7}	&3	&1	&0	&0	&0	&0	\\\cline{1-11}
+A	&0	&3	&1	&3	&\tikzmark{e}{14}	&\tikzmark{c}{10}	&6	&2	&0	&0	\\\cline{1-11}
+E	&0	&0	&0	&0	&10	&8	&\tikzmark{b}{17}	&13	&9	&5\\\cline{1-11}
+D	&0	&0	&0	&0	&6	&4	&13	&\tikzmark{a}{24}	&20	&16	\\\cline{1-11}
+K	&0	&0	&0	&0	&2	&0	&9	&20	&18	&14\\\cline{1-11}
+\end{tabularx}
+\link{a}{b}
+\link{b}{c}
+\link{c}{e}
+\link{e}{f}
+\link{f}{h}
+    \caption{Table for Problem 1}
+\end{figure}
+\begin{align*}
+    \text{Match score} &= 7 \\
+    \text{Mismatch penalty} &= -6\\
+    \text{Gap penalty} &= -4 \\
+    \text{Score of local alignment} &= 24
+\end{align*}
+If we look at intersection of the second row and the sixth column, 
+    namely the intersection of $G$s, it became $7$ from $0$ as a result 
+    of a match. Thus, a match score is $7$.
+ 
+ If we look at the cell at immediately right of that cell, the intersection 
+    of $G$ and $E$, we see a score of $3$. Since $G$ and $E$ does not 
+    match, this must be a result of a gap. The score became $3$ from
+    $7$. Thus, the gap penalty is $-4$.
+ 
+ If we look at the cell at immediately under the previous cell, the
+    intersection of $A$ and $E$, we see a score of $1$. Since $A$ and 
+    $E$ does not match, this must be coming from either a mismatch or 
+    a gap. The adjacent cells have the value $3$. So, if it would have 
+    been a gap, the score should be $-1$ and as a result $0$ because 
+    we use local alignment and $0>-1$. So the score must be coming 
+    from a mismatch. The previous cell is a $7$ and thus a mismatch 
+    penalty is $-6$.
+    
+Since the greatest value of the table is $24$, the score of the 
+    local alignment is $24$.
+    
+The best local alignments is:
+\begin{verbatim}
+    MAGED
+    MA-ED
+\end{verbatim}
+If we calculate the alignment, there are four matches ($4\times 7$) and one 
+    gap ($-4$), resulting in $4\times7-4=24$. Thus, we get the same value as 
+    the traceback of cells from the table.
+\section*{Problem 2}
+
+\begin{figure}[H]
+    \centering
+\begin{tabularx}{\textwidth}{|M|M|M|M|M|M|M|M|M|M|M|}
+\cline{1-11}
+	&-	&M	&C	&G	&M	&G	&C	&M	&E	&L	\\ \cline{1-11}
+-	&\tikzmark{k}{0}	&\tikzmark{j}{-4}	&\tikzmark{i}{-8}	&-12	&-16	&-20	&-24	&-28	&-32	&-36	\\\cline{1-11}
+G	&-4	&-3	&-7	&\tikzmark{h}{-2}	&-6	&-10	&-14	&-18	&-22	&-26	\\\cline{1-11}
+M	&-8	&1	&-3	&-6	&\tikzmark{g}{3}	&\tikzmark{f}{-1}	&-5	&-9	&-13	&-17	\\\cline{1-11}
+C	&-12	&-3	&10	&6	&2	&0	&\tikzmark{e}{8}	&4	&0	&-4	\\\cline{1-11}
+M	&-16	&-7	&6	&7	&11	&7	&4	&\tikzmark{d}{13}	&9	&5	\\\cline{1-11}
+E	&-20	&-11	&2	&4	&7	&9	&5	&9	&\tikzmark{c}{18}	&14\\\cline{1-11}
+D	&-24	&-15	&-2	&1	&3	&6	&6	&5	&\tikzmark{b}{14}	&14	\\\cline{1-11}
+L	&-28	&-19	&-6	&-3	&3	&2	&5	&8	&10	&\tikzmark{a}{18}\\\cline{1-11}
+\end{tabularx}
+\link{a}{b}
+\link{b}{c}
+\link{c}{d}
+\link{d}{e}
+\link{e}{f}
+\link{f}{g}
+\link{g}{h}
+\link{h}{i}
+\link{i}{j}
+\link{j}{k}
+    \caption{Table for Problem 2}
+\end{figure}
+The best alignment is:
+\begin{verbatim}
+    MCGMGCME-L
+    --GM-CMEDL
+\end{verbatim}
+If we calculate the scores in the final alignment, we get four gaps 
+    ($4\times-4$) and the scores from the table (GG$=6$, MM$=5$, CC$=9$, 
+    MM$=5$, EE$=5$, LL$=4$). \\
+
+Total score is $6+5+9+5+5+4+4\times-4=18$, 
+    which is the same value as the table we created.
+\end{document}

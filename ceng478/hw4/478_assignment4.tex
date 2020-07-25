@@ -1,0 +1,189 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{amsmath}
+
+
+\usepackage[hmargin=3cm,vmargin=6.0cm]{geometry}
+%\topmargin=0cm
+\topmargin=-2cm
+\addtolength{\textheight}{6.5cm}
+\addtolength{\textwidth}{2.0cm}
+%\setlength{\leftmargin}{-5cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{0.0cm}
+
+\newcommand{\HRule}{\rule{\linewidth}{1mm}}
+
+%misc libraries goes here
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+
+\begin{document}
+\noindent
+\HRule
+\begin{center}
+\Large 
+\textbf{CENG 478}  \\
+\normalsize 
+Assignment 4 \\
+Deadline: Jun 3, 23:59 \\
+\end{center}
+\begin{flushleft}
+\normalsize 
+	Full Name: Yasin Fatih ALPUL\\
+	Id Number: 2098739
+\end{flushleft}
+\HRule
+
+% Write your answers below the section tags
+\section*{Answer 1}
+We can see that the processor that we should find moves in a circular way.
+    That is, the $P_{i+1}$ processor starts from process $0$, continues with $1,2,3$ etc. and all the way up to the processor $P_{p-1}$ and then go back to $0$.
+    Therefore, the $V(p)$ function is equal to $V(p)=p$, which is defined as after
+    every $V(p)$ requests, each processor has received at least one work request.
+    
+The processor in this "edge" can be found in $\Theta(logp)$ time using the algorithm
+    presented in (Lin, 1992). The algorithm is basically a binary search. The
+    exact algorithm can be found below.
+    
+\begin{verbatim}
+    step=Proc_num; /* number of processors */
+    base=Myself; /*my processor Id */
+    
+    val=remote_read(base);
+    while (step > 1)
+    {
+        step = (step+1)/2;
+        curr = (base+step)%Proc_num;
+        
+        temp = remote_read(curr);
+        if (curr > base)
+        {
+            if (val == temp)
+            {
+                base = curr;
+            }
+        }
+        else
+        {
+            if (val != temp)
+            {
+                base = curr;
+                val = temp;
+            }
+        }
+    }
+    if ((base+1)%Proc_num == 0) /* round trip */
+    {
+        val++;
+    }
+    
+    next = (base+1)%Proc_num;
+    test_and_set(next, val); /* atomic operation */
+\end{verbatim}
+If we assume this process is computed for $p$ processes in each step and if we
+    also assume there are a total of $logW$ steps, (let $W$ be the total work, it
+    gets divided in every step), then the total communication overhead becomes
+    $O(log(p)log(W)p)$.
+\section*{Answer 2}
+When the algorithm first started, all of the open lists of processors are initially
+    empty. In this period, some nodes may be needlessly pass between processors.
+    However, after some period of time, the algorithm will start to discard "bad"
+    nodes.
+    
+Let some node $n$ be a bad node and would not be expanded in a sequential algorithm.
+    Since the hash function is completely random, that is, it maps each processor with
+    equal $1/p$ probability, on average, the nodes which are expanded from that node
+    will be discarded by other processors. Hence, the expected number of nodes
+    expanded by this parallel formulation differs from the optimal number by a
+    constant factor.
+    
+According to section $5.4.5$ from the textbook, isoefficiency can be defined as the
+    maximum of communication, concurrency and other overheads. Since in each iteration
+    of the algorithm, $\Theta(p)$ nodes are expanded, and the cost of communicating
+    one node is given as $O(1)$, it corresponds to a communication overhead of
+    $\Theta(p)$. Since there are no other overheads, the isoefficiency function
+    can be given as $\Theta(p)$.
+\section*{Answer 3}
+\subsection*{a.}
+Speedup is defined as $\frac{T_s}{T_p}$ where $T_s$ is the sequential execution time and
+    $T_p$ is the parallel execution time. Using the values given,
+    \begin{align*}
+        \frac{T_s}{T_p} &= \frac{t_cnlogn}{\frac{t_cnlogn}{p}+\frac{t_wnlogp}{p}}\\
+        &= \frac{1}{\frac{1}{p}+\frac{t_wnlogp}{pt_cnlogn}} \\
+        &= \frac{p}{1+\frac{t_wnlogp}{t_cnlogn}}\\
+        &= \frac{p}{1+\frac{t_wlogp}{t_clogn}}
+    \end{align*}
+    
+Efficiency is defined as speedup divided by number of processors. Using the speedup we
+    have calculated above,
+    \begin{align*}
+        \frac{\text{Speedup}}{p} &= \frac{\frac{p}{1+\frac{t_wlogp}{t_clogn}}}{p} \\
+        &= \frac{1}{1+\frac{t_wlogp}{t_clogn}}
+    \end{align*}
+    
+If we use the given $t_w$ and $t_c$ values, we get
+\begin{align*}
+    S&=\frac{p}{1+0.2\frac{logp}{logn}}\\
+    E&=\frac{1}{1+0.2\frac{logp}{logn}}
+\end{align*}
+\subsection*{b.}
+According to the textbook, \textit{isoefficiency} is defined as the growth rate of $W$
+    required to keep the efficiency fixed as $p$ increases. Using algebraic operations,
+    we use the expression found above,
+    
+    \begin{align*}
+        E &= \frac{1}{1+0.2\frac{logp}{logn}} \\
+        \frac{1}{E} &= 1+0.2\frac{logp}{logn} \\
+        \frac{1}{E} -1 &= 0.2\frac{logp}{logn} \\
+        \frac{5}{E} -5 &= \frac{logp}{logn} \\
+        logn&= \frac{logp}{\frac{5}{E} -5} \\
+        logn&= \frac{Elogp}{5-5E} \\
+        logn&= logp^{\frac{5}{5-5E}} \\
+        n&= p^{\frac{5}{5-5E}} \\
+    \end{align*}
+    
+We need to find the expression for $W$ in order to find the isoefficiency function.
+    Since $W$ is defined in terms of $n$ and the \textit{Fast Fourier Transform}
+    algorithm has $W=\Theta(nlogn)$, we find this expression by multiplying the last
+    two equations side by side.
+    
+\[
+    nlogn = p^{\frac{5}{5-5E}}logp^{\frac{5}{5-5E}}
+\]
+Since the desired isoefficiency is $0.6$, we use $E=0.6$.
+\[
+    nlogn = 2.5p^{2.5}logp
+\]
+\subsection*{c.}
+As the previous section, if we use $E=0.4$, we get
+\[
+    nlogn = \frac{5}{3}p^{\frac{5}{3}}logp
+\]
+\subsection*{d.}
+Using the expression we found in previous sections,
+\begin{align*}
+    S&= \frac{p}{1+\frac{t_wlogp}{t_clogn}}\\
+    E&= \frac{1}{1+\frac{t_wlogp}{t_clogn}}
+\end{align*}
+Using the given $t_w$ and $t_c$ values we get
+\begin{align*}
+    S&= \frac{p}{1+\frac{logp}{logn}}\\
+    E&= \frac{1}{1+\frac{logp}{logn}}
+\end{align*}
+If we compute the isoefficiency function as before, we get
+\begin{align*}
+    E&= \frac{1}{1+\frac{logp}{logn}} \\
+    \frac{1}{E}&=1+\frac{logp}{logn} \\
+    \frac{1}{E}-1&=\frac{logp}{logn}\\
+    logn&=\frac{logp}{\frac{1}{E}-1}\\
+    logn&=\frac{Elogp}{1-E}\\
+    n&=p^\frac{E}{1-E}\\
+    nlogn&=p^\frac{E}{1-E}\frac{Elogp}{1-E}
+\end{align*}
+For $E=0.6$ we get
+\[
+    nlogn=\frac{3}{2}p^\frac{3}{2}logp
+\]
+\end{document}
